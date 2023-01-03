@@ -13,7 +13,7 @@ export install_dir="/system/app/"
 root_dir="$(
   cd "$(dirname "$0")" || exit
   pwd
-)	" #FILE_DIR_ROOT
+)"
 export root_dir
 
 #INSTALL SU
