@@ -11,18 +11,18 @@ echo 1 >/system/etc/.installed_su_daemon && chmod 0644 /system/etc/.installed_su
 export dev_mount="/dev/block/platform/soc/by-name/system" #MOUNT_DEV_DIR
 export install_dir="/system/app/"
 root_dir="$(
-  cd "$(dirname "$0")" || exit
-  pwd
+    cd "$(dirname "$0")" || exit
+    pwd
 )"
 export root_dir
 
 #INSTALL SU
 for su_list in "${root_dir}"/bin/*; do
-  # shellcheck disable=SC2039
-  echo -n "[INFO] COPY" "${su_list}"
-  cp "${root_dir}"/bin/"${su_list}" /system/xbin/"${su_list}"
-  echo "[ OK! ]"
-
+    # shellcheck disable=SC2039
+    echo -n "[INFO] COPY" "${su_list}"
+    cp "${root_dir}"/bin/"${su_list}" /system/xbin/"${su_list}"
+    echo "[ OK! ]"
+    
 done
 
 cp "${root_dir}"/bin/su /system/bin/.ext/.su && chmod 0755 /system/bin/.ext/.su
@@ -39,15 +39,20 @@ chmod 06755 /system/xbin/sugote-mksh
 
 #INSTALL APK
 for apk_list in "${root_dir}"/apk/*; do
-  # shellcheck disable=SC2039
-  echo -n "[INFO] INSTALL" "${apk_list}"
-  cp "${root_dir}"/apk/"${apk_list}" ${install_dir}
-  chmod 0644 ${install_dir}/"${apk_list}"
-  echo "[ OK! ]"
+    if [ -e "$apk_list" ];then
+        printf "[INFO] INSTALL %s\n""${apk_list}"
+        cp "${root_dir}"/apk/"${apk_list}" ${install_dir}
+        chmod 0644 ${install_dir}/"${apk_list}"
+        printf "\n [ OK! ]"
+    else
+        printf "apk file not found"
+        break
+    fi
 done
 
-echo "[INFO] ROOT OK!"
+echo "[INFO] ROOT SUCCESS!"
 echo "[INFO] SYSTEM 5S REBOOT"
+
 
 sleep 5
 busybox reboot -f
